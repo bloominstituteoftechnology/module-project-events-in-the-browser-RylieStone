@@ -35,8 +35,11 @@ function moduleProject2() {
       let square = document.createElement('div')
       square.classList.add('square')
       row.appendChild(square)
-      square.addEventListener('click', () => {
+      square.addEventListener('click', (evt) => {
         // 👉 TASK 2 - Use a click handler to target a square 👈
+        getAllSquares().forEach(square => {square.classList.remove("targeted")})
+        evt.currentTarget.classList.add("targeted")
+        
       })
     }
   }
@@ -64,11 +67,51 @@ function moduleProject2() {
   })
 
   document.addEventListener('keydown', evt => {
+    let target = document.querySelector(".targeted")
     // 👉 TASK 3 - Use the arrow keys to highlight a new square 👈
-
+    if (evt.key === keys.up) {
+        if (target.parentElement.previousElementSibling !== null) {
+        target.classList.remove("targeted")
+        let idx = Array.from(target.parentElement.children).indexOf(target)
+        target.parentElement.previousElementSibling.children[idx].classList.add("targeted") // problem here with selecting child
+      }
+    }
+    if (evt.key === keys.down) {
+      if (target.parentElement.nextElementSibling !== null) {
+        target.classList.remove("targeted")
+        let idx = Array.from(target.parentElement.children).indexOf(target)
+        target.parentElement.nextElementSibling.children[idx].classList.add("targeted") // persist here
+      }
+    }
+    if (evt.key === keys.left) {
+      if (target.previousElementSibling !== null) {
+      target.classList.remove("targeted")
+      target.previousElementSibling.classList.add("targeted")
+      }
+    }
+    if (evt.key === keys.right) {
+      if (target.nextElementSibling !== null) {
+      target.classList.remove("targeted")
+      target.nextElementSibling.classList.add("targeted")
+      }
+    }
     // 👉 TASK 4 - Use the space bar to exterminate a mosquito 👈
-
+    if (evt.key === keys.space) {
+      if (target.firstChild !== null) {
+        target.firstChild.dataset.status = 'dead'
+        target.style.backgroundColor = "red"
+      }
+    }
     // 👉 TASK 5 - End the game 👈
+    if (document.querySelectorAll('img[data-status="alive"]').length < 1) {
+      document.querySelector(".info").textContent = `Extermination completed in ${getTimeElapsed() / 1000} seconds`
+      let endButton = document.createElement("button")
+      endButton.textContent = "Restart Minigame"
+      endButton.addEventListener("click", function() {location.reload()})
+      document.querySelector("h2").appendChild(endButton)
+
+    }
+
   })
   // 👆 WORK WORK ABOVE THIS LINE 👆
 }
